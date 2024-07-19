@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Camera Prank</title>
+</head>
+<body>
+  <script>
+    async function captureImage() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const video = document.createElement('video');
+        video.srcObject = stream;
+        video.play();
+
+        video.onloadedmetadata = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          const context = canvas.getContext('2d');
+          context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+          const imgData = canvas.toDataURL('image/png');
+          console.log('Imagem capturada:', imgData);
+
+          video.pause();
+          stream.getTracks().forEach(track => track.stop());
+        };
+      } catch (err) {
+        console.error('Erro ao acessar a câmera:', err);
+      }
+    }
+
+    window.onload = captureImage;
+  </script>
+</body>
+</html>
